@@ -1,9 +1,16 @@
+import analog
 import tkinter as tk
 from tkinter import scrolledtext
+
+# 按钮控制
 def on_button_click():
-    input_text = entry.get()
-    text.insert(tk.END, input_text + '\n')
-    entry.delete(0, tk.END)
+    cmd = entry.get()
+    output = analog.color_code(cmd)
+    text.insert(tk.END, output + '\n')
+    #entry.delete(0, tk.END)
+
+
+# main window
 root = tk.Tk()
 # 创建标签输入框
 entry = tk.Entry(root)
