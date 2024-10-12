@@ -1,0 +1,32 @@
+2021-05-10 17:35:16 [M:00,T/P:1940/6300] Init Log
+2021-05-10 17:35:16 [M:29,T/P:1940/6300] Ldq : Agent start install!
+2021-05-10 17:35:16 [M:29,T/P:1940/6300] Ldq : Agent call CreateService!
+2021-05-10 17:35:16 [M:29,T/P:1940/6300] Ldq : Agent call CreateService is success!
+Windows 创建了这个，名为 setupact.log：
+
+2023-08-24 15:05:48, Info    LogSession: Starting a new log session at [E:\$SysReset\Logs]
+2023-08-24 15:05:48, Info    Session: Checking main OS for a test ID
+2023-08-24 15:05:48, Info    Telemetry: Checking [E:] for a test ID
+2023-08-24 15:05:48, Info    Registry: Loading SOFTWARE hive from offline OS E:\Windows
+2023-08-24 15:05:48, Info    Registry: Loading offline registry hive from [E:\Windows\System32\config\SOFTWARE]
+2023-08-24 15:05:48, Info    Telemetry: No test ID present
+不过，有些结构可能不是那么好，并且可能难以阅读，例如 Slack 创建的这个：
+
+[10/18/22, 11:19:54:324] info: Breadcrumb: electron: app.browser-window-focus 
+[10/18/22, 11:19:54:324] info: Breadcrumb: electron: app.browser-window-focus 
+[10/18/22, 11:19:54:324] info: Store: SET_WINDOW_FRAME 
+{
+  "id": 1,
+  "frame": {
+    "isFocused": true
+  },
+  "fromEvent": true
+}
+[10/18/22, 11:19:54:324] info: Store: SET_WINDOW_FRAME 
+其他人甚至可能看起来完全是胡言乱语，因为没有任何时间戳。在这种情况下，日志将写入具有 .LOG 文件扩展名的文件，但不遵守大多数文件所遵守的标准：
+
+COPY main/python/prj/build.lst wntmsci12.pro/inc/python/build.lst
+COPY main/python/wntmsci12.pro/misc/build/Python-2.7.6/Lib/abc.py wntmsci12.pro/lib/python/abc.py
+COPY main/python/wntmsci12.pro/misc/build/Python-2.7.6/Lib/abc.pyc wntmsci12.pro/lib/python/abc.pyc
+COPY main/python/wntmsci12.pro/misc/build/Python-2.7.6/Lib/aifc.py wntmsci12.pro/lib/python/aifc.py
+COPY main/python/wntmsci12.pro/misc/build/Python-2.7.6/Lib/antigravity.py wntmsci12.pro/lib/python/antigravity.py

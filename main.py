@@ -3,6 +3,7 @@ import glob
 import tkinter as tk
 from tkinter import scrolledtext
 
+
 # 逐行分析
 def find_command_in_line(cmd, line):
     if cmd in line:
@@ -10,14 +11,17 @@ def find_command_in_line(cmd, line):
     else:
         return 0
 
-# 命令行分析
+# 读取文件进行分析和输出
 def run(file_path, cmd):
     with open(file_path, 'r', encoding='utf-8') as file:
         # 逐行读取文件
         for line in file:
             rc = find_command_in_line(cmd, line)
+            # 分析完成后输出
             if(rc):
                 text.insert(tk.END, line)
+        return
+    text.insert(tk.END, "error file address")
 
 # 默认地址检索
 def find_defult_txt_file():
@@ -35,17 +39,20 @@ def find_defult_txt_file():
 
 # 按钮控制
 def on_button_click():
+    # 清除之前的输出
+    text.delete('1.0', tk.END)
+    # 读取地址和cmd
     cmd = entry.get()
     address = loc.get()
+    # 判断使用默认地址
     if not address:
         address = find_defult_txt_file()
         if not address:
             text.insert(tk.END, "no file to analog")
             return
+    # 有文件地址的情况下运行输出
     run(address, cmd)
-    # output = analog.color_code(cmd)
-    # text.insert(tk.END, output + '\n')
-    entry.delete(0, tk.END)
+    
 
 
 # main window
@@ -71,9 +78,11 @@ entry.pack()
 button = tk.Button(root, text="Submit", command=on_button_click)
 button.pack()
 
-# 创建滚动的文本输出框
+# 创建滚动的文本输出框(日志部分)
 text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=80, height=25)
 text.pack()
+# 创建滚动的文本输出框(同类问题提示)
+
 
 # 主循环
 root.mainloop()
