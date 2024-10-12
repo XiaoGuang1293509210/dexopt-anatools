@@ -1,21 +1,42 @@
+import analogr as ag
 import os
 import glob
 import tkinter as tk
 from tkinter import scrolledtext
 
 
+
+
 # 逐行分析
-def find_command_in_line(cmd, line):
-    if cmd in line:
-        return 1
-    else:
-        return 0
+def find_command_in_line(cmd, line):# 'key:err'
+    keyword = {}
+    positionStart = 0
+    positionEnd = -1
+    rc = 0
+    while(positionStart != -1):
+        positionStart = cmd.find('\'',positionEnd+1)
+        if positionStart == -1:
+            break
+        positionCut = cmd.find(':', positionStart+1)
+        positionEnd = cmd.find('\'', positionCut+1)
+        keystring = cmd[positionStart+1:positionCut]
+        valuestring =  cmd[positionCut+1:positionEnd]
+        keyword[keystring] = valuestring
+
+    for key in keyword:
+        if key == 'key':
+            rc = ag.run_key(keyword[key], line)
+        else:
+            text.insert(tk.END, 'error cmd')
+    
+    return rc
 
 # 读取文件进行分析和输出
 def run(file_path, cmd):
     with open(file_path, 'r', encoding='utf-8') as file:
         # 逐行读取文件
         for line in file:
+            # 分析输出与否
             rc = find_command_in_line(cmd, line)
             # 分析完成后输出
             if(rc):
