@@ -8,28 +8,38 @@ from tkinter import scrolledtext
 
 
 # 逐行分析
-def find_command_in_line(cmd, line):# 'key:err'
-    keyword = {}
-    positionStart = 0
-    positionEnd = -1
-    rc = 0
-    while(positionStart != -1):
-        positionStart = cmd.find('\'',positionEnd+1)
-        if positionStart == -1:
-            break
-        positionCut = cmd.find(':', positionStart+1)
-        positionEnd = cmd.find('\'', positionCut+1)
-        keystring = cmd[positionStart+1:positionCut]
-        valuestring =  cmd[positionCut+1:positionEnd]
-        keyword[keystring] = valuestring
-
-    for key in keyword:
+def find_command_in_line(cmd, line):
+    keywords = {}
+    # 将输入的cmd字符串按逗号分割，得到一个包含多个键值对的列表
+    cmd_list = cmd.split(',')
+    for item in cmd_list:
+        # 检查每个键值对是否符合基本格式要求
+        if '\'' not in item or ':' not in item or item.count('\'') < 2:
+            text.insert(tk.END, f'error : Input "{item}" format is incorrect.\n')
+            continue
+        
+        # 初始化位置指针
+        positionStart = item.find('\'')
+        positionCut = item.find(':')
+        positionEnd = item.rfind('\'')  # 使用rfind找到最后一个单引号的位置
+        keystring = item[positionStart+1:positionCut]
+        valuestring = item[positionCut+1:positionEnd]
+        # 确保关键字存在，如果不存在则初始化一个空列表
+        if keystring not in keywords:
+            keywords[keystring] = []
+        # 添加值到对应关键字的列表中
+        keywords[keystring].append(valuestring)
+    # 遍历keywords字典，对每个key执行操作
+    for key, values in keywords.items():
         if key == 'key':
-            rc = ag.run_key(keyword[key], line)
+            for value in values:
+                rc = ag.run_key(value, line)
+                if rc == 1:
+                    break
         else:
-            text.insert(tk.END, 'error cmd')
-    
+            text.insert(tk.END, f'error cmd: Unknown key {key}\n')
     return rc
+
 
 # 读取文件进行分析和输出
 def run(file_path, cmd):
