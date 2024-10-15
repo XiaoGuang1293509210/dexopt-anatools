@@ -4,12 +4,36 @@ import glob
 import tkinter as tk
 from tkinter import scrolledtext
 
-
+class MyInput:
+    cmd = ''
+    address = ''
+    datestart = ''
+    dateend = ''
+    timestart = ''
+    timeend = ''
+    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend=''):
+        self.cmd = cmd
+        self.address = address
+        self.datestart = datestart
+        self.dateend = dateend
+        self.timestart = timestart
+        self.timeend = timeend
+    def display(self):
+        print(f"Command: {self.cmd}")
+        print(f"Address: {self.address}")
+        print(f"Start Date: {self.datestart}")
+        print(f"End Date: {self.dateend}")
+        print(f"Start Time: {self.timestart}")
+        print(f"End Time: {self.timeend}")
+# 定义一个接受 MyInput 实例的函数
+def process_input(my_input_instance):
+    print("Processing input:")
+    my_input_instance.display()
 # 逐行分析
-def find_command_in_line(cmd, line):
+def find_command_in_line(text_input, line):
     keywords = {}
     # 将输入的cmd字符串按逗号分割，得到一个包含多个键值对的列表
-    cmd_list = cmd.split(',')
+    cmd_list = text_input.cmd.split(',')
     for item in cmd_list:
         # 检查每个键值对是否符合基本格式要求
         if '\'' not in item or ':' not in item or item.count('\'') < 2:
@@ -31,7 +55,7 @@ def find_command_in_line(cmd, line):
     for key, values in keywords.items():
         if key == 'key':
             for value in values:
-                rc = ag.run_key(value, line)
+                rc = ag.run_key(text_input, value, line)
                 if rc == 1:
                     break
         else:
@@ -40,12 +64,12 @@ def find_command_in_line(cmd, line):
 
 
 # 读取文件进行分析和输出
-def run(file_path, cmd):
-    with open(file_path, 'r', encoding='utf-8') as file:
+def run(text_input):
+    with open(text_input.address, 'r', encoding='utf-8') as file:
         # 逐行读取文件
         for line in file:
             # 分析输出与否
-            rc = find_command_in_line(cmd, line)
+            rc = find_command_in_line(text_input, line)
             # 分析完成后输出
             if(rc):
                 text.insert(tk.END, line)
@@ -71,16 +95,23 @@ def on_button_click():
     # 清除之前的输出
     text.delete('1.0', tk.END)
     # 读取地址和cmd
-    cmd = entry.get()
-    address = loc.get()
+    text_input = MyInput(
+        cmd = entry.get(),
+        address = loc.get(),
+        datestart = StartDate.get(),
+        dateend = EndDate.get(),
+        timestart = StartTime.get(),
+        timeend = EndTime.get()
+    )
+    process_input(text_input)
     # 判断使用默认地址
-    if not address:
-        address = find_defult_txt_file()
-        if not address:
+    if not text_input.address:
+        text_input.address = find_defult_txt_file()
+        if not text_input.address:
             text.insert(tk.END, "no file to analog")
             return
     # 有文件地址的情况下运行输出
-    run(address, cmd)
+    run(text_input)
     
 
 
@@ -98,10 +129,37 @@ loc = tk.Entry(root, width=80)
 entry_text = tk.Label(root, text = "输入命令", width=40)
 entry = tk.Entry(root, width=80)
 
+# 创建日期的标签与输入框，并放在同一行
+date_frame = tk.Frame(root)
+StartDate_text = tk.Label(date_frame, text="起始日期", width=20)
+StartDate = tk.Entry(date_frame, width=20)
+EndDate_text = tk.Label(date_frame, text="截止日期", width=20)
+EndDate = tk.Entry(date_frame, width=20)
+
+StartDate_text.pack(side=tk.LEFT)
+StartDate.pack(side=tk.LEFT)
+EndDate_text.pack(side=tk.LEFT)
+EndDate.pack(side=tk.LEFT)
+
+# 创建时间的标签与输入框，并放在同一行
+time_frame = tk.Frame(root)
+StartTime_text = tk.Label(time_frame, text="起始时间", width=20)
+StartTime = tk.Entry(time_frame, width=20)
+EndTime_text = tk.Label(time_frame, text="截止时间", width=20)
+EndTime = tk.Entry(time_frame, width=20)
+
+StartTime_text.pack(side=tk.LEFT)
+StartTime.pack(side=tk.LEFT)
+EndTime_text.pack(side=tk.LEFT)
+EndTime.pack(side=tk.LEFT)
+
+# 布局
 loc_text.pack()
 loc.pack()
 entry_text.pack()
 entry.pack()
+date_frame.pack()
+time_frame.pack()
 
 # 创建按钮
 button = tk.Button(root, text="Submit", command=on_button_click)
