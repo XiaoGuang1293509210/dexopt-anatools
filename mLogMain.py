@@ -1,10 +1,8 @@
-import analogr as ag
+import mLogAnalog as ag
 import os
 import glob
 import tkinter as tk
 from tkinter import scrolledtext
-
-
 
 
 # 逐行分析
@@ -54,7 +52,7 @@ def run(file_path, cmd):
         return
     text.insert(tk.END, "error file address")
 
-# 默认地址检索
+# 空地址时使用默认地址检索
 def find_defult_txt_file():
     # 获取当前工作目录
     current_dir = os.getcwd()
