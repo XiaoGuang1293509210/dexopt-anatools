@@ -15,11 +15,13 @@ class MyInput:
     timeend = ''
     process = ''
     thread = ''
-    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend='',process='',thread=''):
+    log_level = ''
+    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level=''):
         self.cmd = cmd
         self.address = address
         self.process = process
         self.thread = thread
+        self.log_level = log_level
         # 转换日期为元组格式
         self.datestart = tuple(map(int, (datestart or '1-1').split('-')))
         self.dateend = tuple(map(int, (dateend or '12-30').split('-')))
@@ -29,7 +31,10 @@ class MyInput:
         # 将 process 和 thread 字符串转换为整数列表
         self.process_list = list(map(int, self.process.split())) if self.process else []
         self.thread_list = list(map(int, self.thread.split())) if self.thread else []
-              
+        if log_level:  # 检查log_level是否非空
+            self.log_level = log_level[0]  # 只有在log_level非空时才截取首个字符
+        else:
+            self.log_level = ''  # 如果log_level为空，设置self.log_level为空字符串或默认值
     def display(self):
         print(f"Command: {self.cmd}")
         print(f"Address: {self.address}")
@@ -39,7 +44,8 @@ class MyInput:
         print(f"End Time: {self.timeend}")
         print(f"Process: {self.process}")
         print(f"Thread: {self.thread}")
-    
+        print(f"log_level: {self.log_level}")
+        
 # 定义一个接受 MyInput 实例的函数
 def process_input(my_input_instance):
     print("Processing input:")
@@ -118,7 +124,8 @@ def on_button_click():
         timestart = StartTime.get(),
         timeend = EndTime.get(),
         process = process_in.get(),
-        thread = thread_in.get()
+        thread = thread_in.get(),
+        log_level = log_level_combobox.get()
     )
     process_input(text_input)
     # 判断使用默认地址
@@ -141,9 +148,9 @@ root.geometry("800x600")  # 设置窗口初始大小
 root.configure(bg="white")  # 设置窗口的背景色
 
 # 创建标签输入框
-loc_text = tk.Label(root, text = "输入文件地址", width=40)
+loc_text = tk.Label(root, text = "输入文件地址,例如:generated_logs.txt", width=80)
 loc = tk.Entry(root, width=80)
-entry_text = tk.Label(root, text = "输入命令", width=40)
+entry_text = tk.Label(root, text = "输入命令,例如：'key:System'", width=80)
 entry = tk.Entry(root, width=80)
 
 # 创建日期的标签与输入框，并放在同一行
@@ -190,6 +197,14 @@ entry.pack()
 date_frame.pack()
 time_frame.pack()
 process_thread_frame.pack()
+
+# 创建组合框的框架
+log_level_frame = tk.Frame(root)
+log_level_frame.pack()
+# 创建组合框控件，设置其宽度并初始化一个默认值
+log_level_combobox = ttk.Combobox(log_level_frame, width=20, values=['','V:Verbose,调试信息', 'D:Debug,调试信息', 'I:Info,一般信息', 'W:Warn', 'E:ERROR'])
+log_level_combobox.set(' 请选择日志级别')  # 设置默认显示的值
+log_level_combobox.pack(side=tk.LEFT)
 
 # 创建按钮
 button = tk.Button(root, text="Submit", command=on_button_click)

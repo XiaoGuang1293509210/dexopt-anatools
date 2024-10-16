@@ -54,6 +54,11 @@ def run_key(text_input, val,line):
             return 0
     # 如果两个列表都为空，则不进行检查
 
+    # log_level不为空，则判断log_level是否对应
+    if text_input.log_level:
+        if not log_level == text_input.log_level:
+            return 0
+    
     #检查log中是否含有关键词
     if val in log_content:
         return 1
