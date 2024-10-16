@@ -3,6 +3,8 @@ import os
 import glob
 import tkinter as tk
 from tkinter import scrolledtext
+from datetime import datetime
+from tkinter import ttk
 
 class MyInput:
     cmd = ''
@@ -11,13 +13,23 @@ class MyInput:
     dateend = ''
     timestart = ''
     timeend = ''
-    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend=''):
+    process = ''
+    thread = ''
+    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend='',process='',thread=''):
         self.cmd = cmd
         self.address = address
-        self.datestart = datestart
-        self.dateend = dateend
-        self.timestart = timestart
-        self.timeend = timeend
+        self.process = process
+        self.thread = thread
+        # 转换日期为元组格式
+        self.datestart = tuple(map(int, (datestart or '1-1').split('-')))
+        self.dateend = tuple(map(int, (dateend or '12-30').split('-')))
+        # 定义时间范围 # 将 timestart 和 timeend 转换为 datetime 对象
+        self.timestart = datetime.strptime(timestart or '00:00:00.000', "%H:%M:%S.%f")
+        self.timeend = datetime.strptime(timeend or '23:59:59.999', "%H:%M:%S.%f")
+        # 将 process 和 thread 字符串转换为整数列表
+        self.process_list = list(map(int, self.process.split())) if self.process else []
+        self.thread_list = list(map(int, self.thread.split())) if self.thread else []
+              
     def display(self):
         print(f"Command: {self.cmd}")
         print(f"Address: {self.address}")
@@ -25,6 +37,9 @@ class MyInput:
         print(f"End Date: {self.dateend}")
         print(f"Start Time: {self.timestart}")
         print(f"End Time: {self.timeend}")
+        print(f"Process: {self.process}")
+        print(f"Thread: {self.thread}")
+    
 # 定义一个接受 MyInput 实例的函数
 def process_input(my_input_instance):
     print("Processing input:")
@@ -101,7 +116,9 @@ def on_button_click():
         datestart = StartDate.get(),
         dateend = EndDate.get(),
         timestart = StartTime.get(),
-        timeend = EndTime.get()
+        timeend = EndTime.get(),
+        process = process_in.get(),
+        thread = thread_in.get()
     )
     process_input(text_input)
     # 判断使用默认地址
@@ -153,6 +170,18 @@ StartTime.pack(side=tk.LEFT)
 EndTime_text.pack(side=tk.LEFT)
 EndTime.pack(side=tk.LEFT)
 
+#创建进程与线程的标签与输入框
+process_thread_frame = tk.Frame(root)
+process_in_text = tk.Label(process_thread_frame, text="进程", width=20)
+process_in = tk.Entry(process_thread_frame, width=20)
+thread_in_text = tk.Label(process_thread_frame, text="线程", width=20)
+thread_in = tk.Entry(process_thread_frame, width=20)
+
+process_in_text.pack(side=tk.LEFT)
+process_in.pack(side=tk.LEFT)
+thread_in_text.pack(side=tk.LEFT)
+thread_in.pack(side=tk.LEFT)
+
 # 布局
 loc_text.pack()
 loc.pack()
@@ -160,6 +189,7 @@ entry_text.pack()
 entry.pack()
 date_frame.pack()
 time_frame.pack()
+process_thread_frame.pack()
 
 # 创建按钮
 button = tk.Button(root, text="Submit", command=on_button_click)
