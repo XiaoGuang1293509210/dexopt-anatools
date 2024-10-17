@@ -1,14 +1,5 @@
 from datetime import datetime
 
-def color_code(value):
-    if value == '1':
-        return 'R'
-    elif value == '2':
-        return 'G'
-    elif value == '3':
-        return 'B'
-    else:
-        return 'Invalid value'
     
 
 def run_key(text_input, val,line):
