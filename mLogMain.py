@@ -86,16 +86,18 @@ def find_command_in_line(text_input, line):
 
 # 读取文件进行分析和输出
 def run(text_input):
-    with open(text_input.address, 'r', encoding='utf-8') as file:
-        # 逐行读取文件
-        for line in file:
-            # 分析输出与否
-            rc = find_command_in_line(text_input, line)
-            # 分析完成后输出
-            if(rc):
-                text.insert(tk.END, line)
-        return
-    text.insert(tk.END, "error file address")
+    try:
+        with open(text_input.address, 'r', encoding='utf-8') as file:
+            # 逐行读取文件
+            for line in file:
+                # 分析输出与否
+                rc = find_command_in_line(text_input, line)
+                # 分析完成后输出
+                if(rc):
+                    text.insert(tk.END, line)
+            return
+    except FileNotFoundError as e:
+        text.insert(tk.END, "error file address")
 
 # 空地址时使用默认地址检索
 def find_defult_txt_file():
@@ -103,6 +105,7 @@ def find_defult_txt_file():
     current_dir = os.getcwd()
     # 使用glob模块查找当前目录下的所有.txt文件
     txt_files = glob.glob(os.path.join(current_dir, "*.txt"))
+    print(txt_files[0])
     # 如果找到了.txt文件
     if txt_files:
         # 返回第一个.txt文件的完整路径
@@ -213,8 +216,9 @@ button.pack()
 # 创建滚动的文本输出框(日志部分)
 text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=80, height=25)
 text.pack()
+sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=80, height=10)
+sql_text.pack()
 # 创建滚动的文本输出框(同类问题提示)
-
 
 # 主循环
 root.mainloop()
