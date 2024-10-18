@@ -16,7 +16,7 @@ class MyInput:
     process = ''
     thread = ''
     log_level = ''
-    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level=''):
+    def __init__(self, cmd='', address='', datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level='',nokey=''):
         self.cmd = cmd
         self.address = address
         self.process = process
@@ -35,6 +35,7 @@ class MyInput:
             self.log_level = log_level[0]  # 只有在log_level非空时才截取首个字符
         else:
             self.log_level = ''  # 如果log_level为空，设置self.log_level为空字符串或默认值
+        self.nokey_list = nokey.split(',') if nokey else []
     def display(self):
         print(f"Command: {self.cmd}")
         print(f"Address: {self.address}")
@@ -45,6 +46,7 @@ class MyInput:
         print(f"Process: {self.process}")
         print(f"Thread: {self.thread}")
         print(f"log_level: {self.log_level}")
+        print(f"nokey_list':{self.nokey_list}")
         
 # 定义一个接受 MyInput 实例的函数
 def process_input(my_input_instance):
@@ -124,7 +126,8 @@ def on_button_click():
         timeend = EndTime.get(),
         process = process_in.get(),
         thread = thread_in.get(),
-        log_level = log_level_combobox.get()
+        log_level = log_level_combobox.get(),
+        nokey = nokey_in.get()
     )
     process_input(text_input)
     # 判断使用默认地址
@@ -147,11 +150,12 @@ root.geometry("800x600")  # 设置窗口初始大小
 root.configure(bg="white")  # 设置窗口的背景色
 
 # 创建标签输入框
-loc_text = tk.Label(root, text = "输入文件地址,例如:generated_logs.txt", width=80)
+loc_text = tk.Label(root, text = "输入文件地址(必填),例如:generated_logs.txt", width=80)
 loc = tk.Entry(root, width=80)
-entry_text = tk.Label(root, text = "输入命令,例如：'key:System'", width=80)
+entry_text = tk.Label(root, text = "输入需要查找的关键词(必填),例如：'key:System'", width=80)
 entry = tk.Entry(root, width=80)
-
+nokey_in_text = tk.Label(root, text = "输入不能出现的关键词,例如：'Error','update'", width=80)
+nokey_in = tk.Entry(root, width=80)
 # 创建日期的标签与输入框，并放在同一行
 date_frame = tk.Frame(root)
 StartDate_text = tk.Label(date_frame, text="起始日期", width=20)
@@ -193,6 +197,8 @@ loc_text.pack()
 loc.pack()
 entry_text.pack()
 entry.pack()
+nokey_in_text.pack()
+nokey_in.pack()
 date_frame.pack()
 time_frame.pack()
 process_thread_frame.pack()

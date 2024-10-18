@@ -9,6 +9,7 @@ AI燥起来
 cmd：'key1:value1', 'key2:value2', ..., 'keyN:valueN'，
     例：'System:System','System:update','key1:Error:','key2:0'
     分析：这将会把log中包含'System'和'update'或'Error'或'0'的log打印出来
+输入不能出现的关键词：例：key1,key2,key3
 起始日期、截止日期:XX-XX 例：10-15 
 起始时间、截止时间：XX:XX:XX.XXX 例：02:36:57.020
 进程、线程：XXXX XXXX XXXX 例：1974 1988

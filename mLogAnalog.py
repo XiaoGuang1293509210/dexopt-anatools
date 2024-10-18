@@ -54,4 +54,8 @@ def run_key(text_input, values,line):
     for value in values:
         if value not in log_content:
             return 0
+    #检查log是否包含nokey关键词
+    for key in text_input.nokey_list:
+        if key in line:
+            return 0
     return 1
