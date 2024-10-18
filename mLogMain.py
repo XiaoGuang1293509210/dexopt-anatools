@@ -1,4 +1,5 @@
 import mLogAnalog as ag
+import mLogSqlite as sq
 import os
 import glob
 import tkinter as tk
@@ -99,7 +100,6 @@ def find_defult_txt_file():
     current_dir = os.getcwd()
     # 使用glob模块查找当前目录下的所有.txt文件
     txt_files = glob.glob(os.path.join(current_dir, "*.txt"))
-    print(txt_files[0])
     # 如果找到了.txt文件
     if txt_files:
         # 返回第一个.txt文件的完整路径
@@ -138,23 +138,23 @@ def on_button_click():
 # main window
 root = tk.Tk()
 root.title("My Tkinter App")
-root.geometry("800x600")  # 设置窗口初始大小
+root.geometry("1200x800")  # 设置窗口初始大小
 # root.minsize(200, 200)  # 设置窗口的最小尺寸
 # root.maxsize(1000, 800)  # 设置窗口的最大尺寸
 root.configure(bg="white")  # 设置窗口的背景色
 
-# 创建标签输入框
+# 创建地址和cmd输入框
 loc_text = tk.Label(root, text = "输入文件地址", width=40)
-loc = tk.Entry(root, width=80)
+loc = tk.Entry(root, width=120)
 entry_text = tk.Label(root, text = "输入命令", width=40)
-entry = tk.Entry(root, width=80)
+entry = tk.Entry(root, width=120)
 
 # 创建日期的标签与输入框，并放在同一行
 date_frame = tk.Frame(root)
-StartDate_text = tk.Label(date_frame, text="起始日期", width=20)
-StartDate = tk.Entry(date_frame, width=20)
-EndDate_text = tk.Label(date_frame, text="截止日期", width=20)
-EndDate = tk.Entry(date_frame, width=20)
+StartDate_text = tk.Label(date_frame, text="起始日期", width=30)
+StartDate = tk.Entry(date_frame, width=30)
+EndDate_text = tk.Label(date_frame, text="截止日期", width=30)
+EndDate = tk.Entry(date_frame, width=30)
 
 StartDate_text.pack(side=tk.LEFT)
 StartDate.pack(side=tk.LEFT)
@@ -163,10 +163,10 @@ EndDate.pack(side=tk.LEFT)
 
 # 创建时间的标签与输入框，并放在同一行
 time_frame = tk.Frame(root)
-StartTime_text = tk.Label(time_frame, text="起始时间", width=20)
-StartTime = tk.Entry(time_frame, width=20)
-EndTime_text = tk.Label(time_frame, text="截止时间", width=20)
-EndTime = tk.Entry(time_frame, width=20)
+StartTime_text = tk.Label(time_frame, text="起始时间", width=30)
+StartTime = tk.Entry(time_frame, width=30)
+EndTime_text = tk.Label(time_frame, text="截止时间", width=30)
+EndTime = tk.Entry(time_frame, width=30)
 
 StartTime_text.pack(side=tk.LEFT)
 StartTime.pack(side=tk.LEFT)
@@ -175,10 +175,10 @@ EndTime.pack(side=tk.LEFT)
 
 #创建进程与线程的标签与输入框
 process_thread_frame = tk.Frame(root)
-process_in_text = tk.Label(process_thread_frame, text="进程", width=20)
-process_in = tk.Entry(process_thread_frame, width=20)
-thread_in_text = tk.Label(process_thread_frame, text="线程", width=20)
-thread_in = tk.Entry(process_thread_frame, width=20)
+process_in_text = tk.Label(process_thread_frame, text="进程", width=30)
+process_in = tk.Entry(process_thread_frame, width=30)
+thread_in_text = tk.Label(process_thread_frame, text="线程", width=30)
+thread_in = tk.Entry(process_thread_frame, width=30)
 
 process_in_text.pack(side=tk.LEFT)
 process_in.pack(side=tk.LEFT)
@@ -195,13 +195,13 @@ time_frame.pack()
 process_thread_frame.pack()
 
 # 创建按钮
-button = tk.Button(root, text="Submit", command=on_button_click)
+button = tk.Button(root, text="Submit", command=on_button_click, width=40)
 button.pack()
 
 # 创建滚动的文本输出框(日志部分)
-text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=80, height=25)
+text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=30)
 text.pack()
-sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=80, height=10)
+sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=10)
 sql_text.pack()
 # 创建滚动的文本输出框(同类问题提示)
 
