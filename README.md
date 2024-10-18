@@ -6,7 +6,9 @@ AI燥起来
 
 输入格式：
 路径：本地路径，不输入则默认第一个txt文件
-cmd：'key:value1', 'key:value2', ..., 'key:valueN'
+cmd：'key1:value1', 'key2:value2', ..., 'keyN:valueN'，
+    例：'System:System','System:update','key1:Error:','key2:0'
+    分析：这将会把log中包含'System'和'update'或'Error'或'0'的log打印出来
 起始日期、截止日期:XX-XX 例：10-15 
 起始时间、截止时间：XX:XX:XX.XXX 例：02:36:57.020
 进程、线程：XXXX XXXX XXXX 例：1974 1988

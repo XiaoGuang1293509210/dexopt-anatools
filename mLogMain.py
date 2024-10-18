@@ -74,13 +74,9 @@ def find_command_in_line(text_input, line):
         keywords[keystring].append(valuestring)
     # 遍历keywords字典，对每个key执行操作
     for key, values in keywords.items():
-        if key == 'key':
-            for value in values:
-                rc = ag.run_key(text_input, value, line)
-                if rc == 1:
-                    break
-        else:
-            text.insert(tk.END, f'error cmd: Unknown key {key}\n')
+        rc = ag.run_key(text_input, values, line)
+        if rc == 1:
+            break
     return rc
 
 

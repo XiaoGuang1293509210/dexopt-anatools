@@ -2,7 +2,7 @@ from datetime import datetime
 
     
 
-def run_key(text_input, val,line):
+def run_key(text_input, values,line):
      # 分割日志字符串
     parts = line.split()
     
@@ -51,7 +51,7 @@ def run_key(text_input, val,line):
             return 0
     
     #检查log中是否含有关键词
-    if val in log_content:
-        return 1
-    else:
-        return 0
+    for value in values:
+        if value not in log_content:
+            return 0
+    return 1
