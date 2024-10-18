@@ -2,7 +2,7 @@ from datetime import datetime
 
     
 
-def run_key(text_input, val,line):
+def run_key(text_input, values,line):
      # 分割日志字符串
     parts = line.split()
     
@@ -45,8 +45,17 @@ def run_key(text_input, val,line):
             return 0
     # 如果两个列表都为空，则不进行检查
 
+    # log_level不为空，则判断log_level是否对应
+    if text_input.log_level:
+        if not log_level == text_input.log_level:
+            return 0
+    
     #检查log中是否含有关键词
-    if val in log_content:
-        return 1
-    else:
-        return 0
+    for value in values:
+        if value not in log_content:
+            return 0
+    #检查log是否包含nokey关键词
+    for key in text_input.nokey_list:
+        if key in line:
+            return 0
+    return 1
