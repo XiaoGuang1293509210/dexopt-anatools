@@ -65,31 +65,31 @@ def edit_sql():
     key_text = entry_key.get()  # 获取输入框的内容
     note_text = entry_note.get()  # 获取输入框的内容
     try:
-        rc = mqsl_add_item(key_text,note_text)
+        rc = mqsl_add_item(key_text, note_text)
         text_output.insert(tk.END, rc)  # 在输出框中显示结果
     except TypeError as e:
         text_output.insert(tk.END, "error input") 
 
 
 
-# 创建主窗口
-root = tk.Tk()
-root.title("Edit SQL")
+# # 创建主窗口
+# root = tk.Tk()
+# root.title("Edit SQL")
 
-# 创建输入框
-entry_key = tk.Entry(root, width=50)
-entry_key.pack(pady=10)
-entry_note = tk.Entry(root, width=50)
-entry_note.pack(pady=10)
+# # 创建输入框
+# entry_key = tk.Entry(root, width=50)
+# entry_key.pack(pady=10)
+# entry_note = tk.Entry(root, width=50)
+# entry_note.pack(pady=10)
 
-# 创建按钮，绑定到edit_sql函数
-button = tk.Button(root, text="加入历史日志分析", command = edit_sql)
-button.pack(pady=10)
+# # 创建按钮，绑定到edit_sql函数
+# button = tk.Button(root, text="加入历史日志分析", command = edit_sql)
+# button.pack(pady=10)
 
-# 创建输出框
-text_output = tk.Text(root, height=5, width=50)
-text_output.pack(pady=10)
+# # 创建输出框
+# text_output = tk.Text(root, height=5, width=50)
+# text_output.pack(pady=10)
 
 
-# 运行主循环
-root.mainloop()
+# # 运行主循环
+# root.mainloop()
