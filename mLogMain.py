@@ -122,9 +122,12 @@ def on_button_click():
         thread = thread_entry.get(),
         log_level = log_level_combobox.get()
     )
+    # 检索同类型问题
+    sqlpath = sqlpath_entry.get()
     for item in input_info.keys:
-        if sq.mqsl_find_note(item):
-            sql_text.insert(tk.END, item + ': ' + sq.mqsl_find_note(item))
+        cb_note = sq.mqsl_find_note_by_main(item, sqlpath)
+        if cb_note:
+            sql_text.insert(tk.END, item + ' : ' + cb_note[0])
     # input_info.display()
     # 判断使用默认地址
     if not input_info.address:
@@ -140,10 +143,12 @@ def on_button_click():
 # 主程序窗口
 root = tk.Tk()
 root.title("My Tkinter App")
-root.geometry("1200x800")  # 设置窗口初始大小
+root.geometry("1200x900")  # 设置窗口初始大小
 root.configure(bg="white")  # 设置窗口的背景色
 
 # 输入框: 地址&关键词&反选关键词
+sqlpath_label = tk.Label(root, text = "输入数据库地址(不填的话为数据库目录下第一个db文件),例如:./sqlite/example.db", width=80)
+sqlpath_entry = tk.Entry(root, width=80)
 filepath_label = tk.Label(root, text = "输入文件地址(不填的话为同目录下第一个txt文件),例如:./generated_logs.txt", width=80)
 filepath_entry = tk.Entry(root, width=80)
 key_label = tk.Label(root, text = "输入需要查找的关键词,用逗号分开,例如: info,error", width=80)
@@ -203,6 +208,8 @@ output_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=30
 sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=10)
 
 # 布局
+sqlpath_label.pack()
+sqlpath_entry.pack()
 filepath_label.pack()
 filepath_entry.pack()
 key_label.pack()

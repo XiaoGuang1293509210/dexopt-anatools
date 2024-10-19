@@ -27,11 +27,9 @@ def run_type(text_input,line):
     # 检查日期是否在范围内
     if text_input.datestart:
         if (date_tuple < text_input.datestart):
-            print('out date')
             return 0
     if text_input.dateend:
         if (date_tuple > text_input.dateend):
-            print('out date')
             return 0
     
     # 转换时间为 datetime 对象
@@ -39,11 +37,9 @@ def run_type(text_input,line):
     # 检查 time 是否在时间范围内
     if text_input.timestart:
         if (time < text_input.timestart):
-            print('out time')
             return 0
     if text_input.timeend:
         if (time > text_input.timeend):
-            print('out time')
             return 0
     
     # # 根据 process_list 和 thread_list 的状态决定是否进行检查
@@ -54,19 +50,16 @@ def run_type(text_input,line):
     if text_input.process_list:
         # 如果只有 process_list 不为空，则只检查 process
         if process not in text_input.process_list:
-            print('error process')
             return 0
     
     if text_input.thread_list:
         # 如果只有 thread_list 不为空，则只检查 thread
         if thread not in text_input.thread_list:
-            print('error thread')
             return 0
 
     # log_level不为空，则判断log_level是否对应
     if text_input.log_level != 'A':
         if not log_level == text_input.log_level:
-            print('log eee')
             return 0
     
     return 1
