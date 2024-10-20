@@ -80,12 +80,16 @@ def run_key(text_input,line):
     
     # 提取各个部分
     log_content = ' '.join(parts[5:])
-
+    rc = 0
+    if not text_input.keys:
+        return 1
     for value in text_input.keys:
-        if value not in log_content:
-            return 0
+        if value in log_content:
+            rc = 1
+            break
     #检查log是否包含nokey关键词
     for novalue in text_input.nokeys:
         if novalue in log_content:
-            return 0
-    return 1
+            rc = 0
+            break
+    return rc
