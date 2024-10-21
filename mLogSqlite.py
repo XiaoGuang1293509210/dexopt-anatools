@@ -131,7 +131,7 @@ def msql_find_all_data():
 # 使用默认地址
 def find_defult_db_file():
     # 使用glob模块搜索当前目录下的.db文件
-    current_dir = os.getcwd() + '\\sqlite'
+    current_dir = os.getcwd() + '/sqlite'
     db_files = glob.glob(os.path.join(current_dir, "*.db"))
     # 检查是否找到了.db文件
     if db_files:
