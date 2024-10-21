@@ -140,11 +140,16 @@ def on_button_click():
     # 有文件地址的情况下运行输出
     run(input_info)
 #文件选择按钮
-def browse_file():
+def file_path_browse_file():
     filename = filedialog.askopenfilename(title="Select file",
                                           filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
     filepath_entry.delete(0, tk.END)
     filepath_entry.insert(0, filename)
+def sql_browse_file():
+    filename = filedialog.askopenfilename(title="Select file",
+                                          filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+    sqlpath_entry.delete(0, tk.END)
+    sqlpath_entry.insert(0, filename)
 
 
 # 主程序窗口
@@ -158,13 +163,13 @@ sqlpath_label = tk.Label(root, text = "输入数据库地址(不填的话为数�
 sqlpath_entry_frame = tk.Frame(root)
 sqlpath_entry = tk.Entry(sqlpath_entry_frame, width=80-7)
 sqlpath_entry.pack(side=tk.LEFT)
-sql_browse_button = tk.Button(sqlpath_entry_frame, text="浏览", command=browse_file)
+sql_browse_button = tk.Button(sqlpath_entry_frame, text="浏览", command=sql_browse_file)
 sql_browse_button.pack(side=tk.LEFT)
 filepath_label = tk.Label(root, text = "输入文件地址(不填的话为同目录下第一个txt文件),例如:./generated_logs.txt", width=80)
 filepath_entry_frame = tk.Frame(root)
 filepath_entry = tk.Entry(filepath_entry_frame, width=80-7)
 filepath_entry.pack(side=tk.LEFT)
-browse_button = tk.Button(filepath_entry_frame, text="浏览", command=browse_file)
+browse_button = tk.Button(filepath_entry_frame, text="浏览", command=file_path_browse_file)
 browse_button.pack(side=tk.LEFT)
 key_label = tk.Label(root, text = "输入需要查找的关键词,用逗号分开,例如: info,error", width=80)
 key_entry = tk.Entry(root, width=80)
