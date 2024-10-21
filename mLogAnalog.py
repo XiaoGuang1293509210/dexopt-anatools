@@ -10,16 +10,18 @@ def runrun(text_input,line):
 
 
 def run_type(text_input,line):
-     # 分割日志字符串
+    # 分割日志字符串
     parts = line.split()
-    
+    # 如果格式不正确则返回
+    if len(parts) < 5:
+        return 0
     # 提取各个部分
     date = parts[0]
     time = parts[1]
     process = parts[2]
     thread = parts[3]
     log_level = parts[4]
-    log_content = ' '.join(parts[5:])
+    #log_content = ' '.join(parts[5:])
     #output = f'日期：{date} 时间: {time}, 进程: {process}, 线程: {thread}, log等级: {log_level}, log内容: {log_content}'
     
     # 转换日期为元组格式
