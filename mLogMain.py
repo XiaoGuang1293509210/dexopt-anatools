@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 from datetime import datetime
 from tkinter import ttk
+from tkinter import filedialog
 
 class MyInput:
     address = ''
@@ -109,6 +110,7 @@ def find_defult_txt_file():
 def on_button_click():
     # 清除之前的输出
     output_text.delete('1.0', tk.END)
+    sql_text.delete('1.0', tk.END)
     # 读取地址和cmd
     input_info = MyInput(
         address = filepath_entry.get(),
@@ -137,7 +139,12 @@ def on_button_click():
             return
     # 有文件地址的情况下运行输出
     run(input_info)
-    
+#文件选择按钮
+def browse_file():
+    filename = filedialog.askopenfilename(title="Select file",
+                                          filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+    filepath_entry.delete(0, tk.END)
+    filepath_entry.insert(0, filename)
 
 
 # 主程序窗口
@@ -148,14 +155,21 @@ root.configure(bg="white")  # 设置窗口的背景色
 
 # 输入框: 地址&关键词&反选关键词
 sqlpath_label = tk.Label(root, text = "输入数据库地址(不填的话为数据库目录下第一个db文件),例如:./sqlite/example.db", width=80)
-sqlpath_entry = tk.Entry(root, width=80)
+sqlpath_entry_frame = tk.Frame(root)
+sqlpath_entry = tk.Entry(sqlpath_entry_frame, width=80-7)
+sqlpath_entry.pack(side=tk.LEFT)
+sql_browse_button = tk.Button(sqlpath_entry_frame, text="浏览", command=browse_file)
+sql_browse_button.pack(side=tk.LEFT)
 filepath_label = tk.Label(root, text = "输入文件地址(不填的话为同目录下第一个txt文件),例如:./generated_logs.txt", width=80)
-filepath_entry = tk.Entry(root, width=80)
+filepath_entry_frame = tk.Frame(root)
+filepath_entry = tk.Entry(filepath_entry_frame, width=80-7)
+filepath_entry.pack(side=tk.LEFT)
+browse_button = tk.Button(filepath_entry_frame, text="浏览", command=browse_file)
+browse_button.pack(side=tk.LEFT)
 key_label = tk.Label(root, text = "输入需要查找的关键词,用逗号分开,例如: info,error", width=80)
 key_entry = tk.Entry(root, width=80)
 nokey_label = tk.Label(root, text = "输入无需查找的关键词,例如：Error,update", width=80)
 nokey_entry = tk.Entry(root, width=80)
-
 # 输入框: 日期
 date_frame = tk.Frame(root)
 StartDate_label = tk.Label(date_frame, text="起始日期", width=30)
@@ -209,9 +223,9 @@ sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=10)
 
 # 布局
 sqlpath_label.pack()
-sqlpath_entry.pack()
+sqlpath_entry_frame.pack()
 filepath_label.pack()
-filepath_entry.pack()
+filepath_entry_frame.pack()
 key_label.pack()
 key_entry.pack()
 nokey_label.pack()
