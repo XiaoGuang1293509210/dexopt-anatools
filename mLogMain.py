@@ -147,10 +147,22 @@ def file_path_browse_file():
     filepath_entry.insert(0, filename)
 def sql_browse_file():
     filename = filedialog.askopenfilename(title="Select file",
-                                          filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+                                          filetypes=(("Db files", "*.db"), ("All files", "*.*")))
     sqlpath_entry.delete(0, tk.END)
     sqlpath_entry.insert(0, filename)
-
+def save_output_to_file():
+    #"""Save the content of the output_text widget to a file."""
+    # Use file dialog to let user choose where to save the file
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+    
+    # Ensure the file path is not empty
+    if file_path:
+        # Get the content from the output_text widget
+        content = output_text.get("1.0", tk.END)
+        
+        # Write the content to the selected file
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(content)
 
 # 主程序窗口
 root = tk.Tk()
@@ -217,8 +229,13 @@ log_level_combobox = ttk.Combobox(log_level_frame, width=20, values=['ALL','V:Ve
 log_level_combobox.set(' 请选择日志级别')  # 设置默认显示的值
 log_level_combobox.pack(side=tk.LEFT)
 
-# 提交按钮按钮
-button = tk.Button(root, text="开始分析", command=on_button_click, width=40)
+# 提交按钮
+button_frame = tk.Frame(root)
+analysis_button = tk.Button(button_frame, text="开始分析", command=on_button_click, width=40)
+analysis_button.pack(side=tk.LEFT)
+# 保存按钮
+save_button = tk.Button(button_frame, text="输出保存到文件", command=save_output_to_file, width=20)
+save_button.pack(side=tk.LEFT)
 
 # 输出框(日志部分)
 output_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=30)
@@ -239,7 +256,7 @@ date_frame.pack()
 time_frame.pack()
 process_thread_frame.pack()
 log_level_frame.pack()
-button.pack()
+button_frame.pack()
 output_text.pack()
 sql_text.pack()
 
