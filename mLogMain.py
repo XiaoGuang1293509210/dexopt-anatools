@@ -150,6 +150,7 @@ def sql_browse_file():
                                           filetypes=(("Db files", "*.db"), ("All files", "*.*")))
     sqlpath_entry.delete(0, tk.END)
     sqlpath_entry.insert(0, filename)
+# 输出保存按钮
 def save_output_to_file():
     #"""Save the content of the output_text widget to a file."""
     # Use file dialog to let user choose where to save the file
@@ -238,10 +239,10 @@ save_button = tk.Button(button_frame, text="输出保存到文件", command=save
 save_button.pack(side=tk.LEFT)
 
 # 输出框(日志部分)
-output_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=30)
+output_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=150, height=30)
 
 # 输出框(同类问题提示)
-sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=120, height=10)
+sql_text = scrolledtext.ScrolledText(root, wrap=tk.NONE, width=150, height=10)
 
 # 布局
 sqlpath_label.pack()
