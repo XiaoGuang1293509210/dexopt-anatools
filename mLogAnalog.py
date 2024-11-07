@@ -82,7 +82,7 @@ def run_key(text_input,line):
     
     # 提取各个部分
     log_content = ' '.join(parts[5:])
-    rc = 1
+    rc = 0
     if not text_input.keys and not text_input.nokeys:
         return 1
     if text_input.keys:
@@ -90,6 +90,8 @@ def run_key(text_input,line):
             if value in log_content:
                 rc = 1
                 break
+    else:
+        rc = 1
     if text_input.nokeys:
     #检查log是否包含nokey关键词
         for novalue in text_input.nokeys:
