@@ -110,6 +110,21 @@ def mqsl_find_note_by_main(keys, db_path):
     else:
         return None
 
+# 主函数调用获取所有数据
+def mqsl_get_all_by_main(db_path):
+    if not db_path:
+        db_path = find_defult_db_file()
+    print(db_path)
+    # 连接到SQLite数据库
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    # 查询所有数据
+    c.execute("SELECT keys, note FROM items")
+    rows = c.fetchall()
+    # 关闭连接
+    conn.close()
+    return rows
+    
 # 检索全部的数据
 def msql_find_all_data():
     text_output.delete(1.0, tk.END)

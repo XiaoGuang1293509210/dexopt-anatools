@@ -99,3 +99,15 @@ def run_key(text_input,line):
                 rc = 0
                 break
     return rc
+
+def find_err_in_line(errkey ,line):
+    # 分割日志字符串
+    parts = line.split()
+    
+    # 提取各个部分
+    log_content = ' '.join(parts[5:])
+    
+    if errkey in log_content:
+        return 1
+    
+    return 0

@@ -86,13 +86,20 @@ def find_command_in_line(input_info, line):
     return rc
 
 # 读取文件进行分析和输出
-def run(input_info):
+def run(input_info,sqlpath):
     try:
+        rows = sq.mqsl_get_all_by_main(sqlpath)
         with open(input_info.address, 'r', encoding='utf-8') as file:
             for line in file:
                 rc = find_command_in_line(input_info, line)
                 if(rc):
                     output_text.insert(tk.END, line)
+                #检索常见错误
+                for key,note in rows:
+                    err_rc = ag.find_err_in_line(key ,line)
+                    if (err_rc):
+                        sql_text.insert(tk.END, line)
+                        sql_text.insert(tk.END, "log分析:" + note + "\n")
             return
     except FileNotFoundError as e:
         output_text.insert(tk.END, "error file address")
@@ -126,10 +133,10 @@ def on_button_click():
     )
     # 检索同类型问题
     sqlpath = sqlpath_entry.get()
-    for item in input_info.keys:
-        cb_note = sq.mqsl_find_note_by_main(item, sqlpath)
-        if cb_note:
-            sql_text.insert(tk.END, item + ' : ' + cb_note[0])
+    # for item in input_info.keys:
+    #     cb_note = sq.mqsl_find_note_by_main(item, sqlpath)
+    #     if cb_note:
+    #         sql_text.insert(tk.END, item + ' : ' + cb_note[0])
     # input_info.display()
     # 判断使用默认地址
     if not input_info.address:
@@ -138,7 +145,7 @@ def on_button_click():
             output_text.insert(tk.END, "no file to analog")
             return
     # 有文件地址的情况下运行输出
-    run(input_info)
+    run(input_info,sqlpath)
 #文件选择按钮
 def file_path_browse_file():
     filename = filedialog.askopenfilename(title="Select file",
