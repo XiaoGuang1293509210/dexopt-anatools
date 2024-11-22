@@ -19,8 +19,14 @@ class MyInput:
     process_list = []
     thread_list = []
     log_level = ''
+    analysis_type = ""
+    find_dexopt_key = 0
+    dexopt_start = "starting PostinstallRunnerAction"
+    dexopt_end = "finished last action PostinstallRunnerAction with code ErrorCode::kSuccess"
+    apk_dexopt_start = ""
+    apk_dexopt_end = ""
     # 初始化函数
-    def __init__(self, address='', keys = "", nokeys = "", datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level=''):
+    def __init__(self, address='', keys = "", nokeys = "", datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level='',analysis_type=""):
         self.address = address
         self.keys = self.split_string_to_key(keys)
         self.nokeys = self.split_string_to_key(nokeys)
@@ -40,6 +46,10 @@ class MyInput:
             self.log_level = log_level[0]  # 只有在log_level非空时才截取首个字符
         else:
             self.log_level = 'A'  # 如果log_level为空，设置self.log_level为空字符串或默认值
+        if analysis_type:# 检查analysis_type是否非空
+            self.analysis_type = analysis_type  # 只有在analysis_type非空时才截取首个字符
+        else:
+            self.analysis_type = " "  # 如果analysis_type为空，设置self.analysis_type为空字符串或默认值
     # 显示info信息
     def display(self):
         print(f"Address: {self.address}")
@@ -52,6 +62,7 @@ class MyInput:
         print(f"Process: {self.process}")
         print(f"Thread: {self.thread}")
         print(f"log_level: {self.log_level}")
+        print(f"analysis_type: {self.analysis_type}")
 
     # 将输入字符串按照逗号分隔，但忽略被反斜杠转义的逗号。
     def split_string_to_key(self, input_string):
@@ -85,22 +96,68 @@ def find_command_in_line(input_info, line):
     rc = ag.runrun(input_info, line)
     return rc
 
+def dexopt_analysis(input_info,line):
+    rc = 0 
+    #static find_APK_dexopt_key = 0
+    # 分割日志字符串
+    parts = line.split()
+    # 如果格式不正确则返回
+    if len(parts) < 5:
+        return 0
+    # 提取各个部分
+    #date = parts[0]
+    #time = parts[1]
+    #process = parts[2]
+    #thread = parts[3]
+    log_level = parts[4]
+    log_content = ' '.join(parts[5:])
+    
+    if not input_info.find_dexopt_key and input_info.dexopt_start in log_content:
+        input_info.find_dexopt_key = 1
+    elif input_info.find_dexopt_key and input_info.dexopt_end in log_content:
+        input_info.find_dexopt_key = 0
+        return -1
+    if input_info.find_dexopt_key and log_level == "E" :
+        rc = 1
+    #rc = ag.find_dexopt_err(input_info, line)
+    return rc
+
 # 读取文件进行分析和输出
 def run(input_info,sqlpath):
     try:
+        # 获取数据库所有的错误信息
         rows = sq.mqsl_get_all_by_main(sqlpath)
-        with open(input_info.address, 'r', encoding='utf-8') as file:
-            for line in file:
-                rc = find_command_in_line(input_info, line)
-                if(rc):
-                    output_text.insert(tk.END, line)
-                #检索常见错误
-                for key,note in rows:
-                    err_rc = ag.find_err_in_line(key ,line)
-                    if (err_rc):
-                        sql_text.insert(tk.END, line)
-                        sql_text.insert(tk.END, "log分析:" + note + "\n")
-            return
+        # 根据分析类型进行不同的处理
+        if input_info.analysis_type == "dexopt":
+            with open(input_info.address, 'r', encoding='utf-8') as file:
+                for line in file:
+                    rc = dexopt_analysis(input_info, line)
+                    if(rc == -1):
+                        break
+                    elif(rc == 1):
+                        output_text.insert(tk.END, line)
+                    else:
+                        continue
+                    #检索常见错误
+                    for key,note in rows:
+                        err_rc = ag.find_err_in_line(key ,line)
+                        if (err_rc):
+                            sql_text.insert(tk.END, line)
+                            sql_text.insert(tk.END, "log分析:" + note + "\n")
+                return
+        else:
+            with open(input_info.address, 'r', encoding='utf-8') as file:
+                for line in file:
+                    rc = find_command_in_line(input_info, line)
+                    if(rc):
+                        output_text.insert(tk.END, line)
+                    #检索常见错误
+                    for key,note in rows:
+                        err_rc = ag.find_err_in_line(key ,line)
+                        if (err_rc):
+                            sql_text.insert(tk.END, line)
+                            sql_text.insert(tk.END, "log分析:" + note + "\n")
+                return
     except FileNotFoundError as e:
         output_text.insert(tk.END, "error file address")
 
@@ -129,7 +186,8 @@ def on_button_click():
         timeend = EndTime_entry.get(),
         process = process_entry.get(),
         thread = thread_entry.get(),
-        log_level = log_level_combobox.get()
+        log_level = log_level_combobox.get(),
+        analysis_type = analysis_type_combobox.get()
     )
     # 检索同类型问题
     sqlpath = sqlpath_entry.get()
@@ -137,7 +195,7 @@ def on_button_click():
     #     cb_note = sq.mqsl_find_note_by_main(item, sqlpath)
     #     if cb_note:
     #         sql_text.insert(tk.END, item + ' : ' + cb_note[0])
-    # input_info.display()
+    input_info.display()
     # 判断使用默认地址
     if not input_info.address:
         input_info.address = find_defult_txt_file()
@@ -231,11 +289,21 @@ process_entry.pack(side=tk.LEFT)
 thread_label.pack(side=tk.LEFT)
 thread_entry.pack(side=tk.LEFT)
 
-# 选择框: 日志等级
-log_level_frame = tk.Frame(root)
-log_level_combobox = ttk.Combobox(log_level_frame, width=20, values=['ALL','V:Verbose,调试信息', 'D:Debug,调试信息', 'I:Info,一般信息', 'W:Warn', 'E:ERROR'])
+# 选择框: 日志等级 和 分析类型
+Select_frame = tk.Frame(root)
+log_level_combobox = ttk.Combobox(Select_frame, width=20, values=['ALL','V:Verbose,调试信息', 'D:Debug,调试信息', 'I:Info,一般信息', 'W:Warn', 'E:ERROR'])
 log_level_combobox.set(' 请选择日志级别')  # 设置默认显示的值
+# 新增选择框: 请选择分析类型
+analysis_type_combobox = ttk.Combobox(Select_frame, width=20, values=[' ', 'FOTA', 'dexopt'])
+analysis_type_combobox.set(' 请选择分析类型')  # 设置默认显示的值
+# 将两个组合框添加到combined_frame中，并使用side参数来控制它们的水平排列
 log_level_combobox.pack(side=tk.LEFT)
+analysis_type_combobox.pack(side=tk.LEFT)
+
+# log_level_frame = tk.Frame(root)
+# log_level_combobox = ttk.Combobox(log_level_frame, width=20, values=['ALL','V:Verbose,调试信息', 'D:Debug,调试信息', 'I:Info,一般信息', 'W:Warn', 'E:ERROR'])
+# log_level_combobox.set(' 请选择日志级别')  # 设置默认显示的值
+# log_level_combobox.pack(side=tk.LEFT)
 
 # 提交按钮
 button_frame = tk.Frame(root)
@@ -263,7 +331,8 @@ nokey_entry.pack()
 date_frame.pack()
 time_frame.pack()
 process_thread_frame.pack()
-log_level_frame.pack()
+#log_level_frame.pack()
+Select_frame.pack()
 button_frame.pack()
 output_text.pack()
 sql_text.pack()
