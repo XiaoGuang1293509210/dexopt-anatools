@@ -111,3 +111,6 @@ def find_err_in_line(errkey ,line):
         return 1
     
     return 0
+
+def find_dexopt_err(input_info,line):
+    return 0
