@@ -20,11 +20,15 @@ class MyInput:
     thread_list = []
     log_level = ''
     analysis_type = ""
+    
     find_dexopt_key = 0
     dexopt_start = "starting PostinstallRunnerAction"
     dexopt_end = "finished last action PostinstallRunnerAction with code ErrorCode::kSuccess"
-    apk_dexopt_start = ""
-    apk_dexopt_end = ""
+    find_APK_dexopt_key = 0
+    apk_dexopt_start = "Dex parent of"
+    apk_dexopt_end = "ArtServicePreReboot: Dexopt result: [packageName ="
+    apk_errlog_indexopt = []
+    temp_log = []
     # 初始化函数
     def __init__(self, address='', keys = "", nokeys = "", datestart='', dateend='', timestart='', timeend='',process='',thread='',log_level='',analysis_type=""):
         self.address = address
@@ -96,9 +100,9 @@ def find_command_in_line(input_info, line):
     rc = ag.runrun(input_info, line)
     return rc
 
+
 def dexopt_analysis(input_info,line):
     rc = 0 
-    #static find_APK_dexopt_key = 0
     # 分割日志字符串
     parts = line.split()
     # 如果格式不正确则返回
@@ -112,14 +116,43 @@ def dexopt_analysis(input_info,line):
     log_level = parts[4]
     log_content = ' '.join(parts[5:])
     
+    # 只截取最适化开始到结束的log
     if not input_info.find_dexopt_key and input_info.dexopt_start in log_content:
         input_info.find_dexopt_key = 1
     elif input_info.find_dexopt_key and input_info.dexopt_end in log_content:
         input_info.find_dexopt_key = 0
         return -1
-    if input_info.find_dexopt_key and log_level == "E" :
+    
+    # 只截取apk最适化过程的log
+    if input_info.find_dexopt_key and not input_info.find_APK_dexopt_key and input_info.apk_dexopt_start in log_content:
+        input_info.find_APK_dexopt_key = 1
+    elif input_info.find_dexopt_key and input_info.find_APK_dexopt_key and input_info.apk_dexopt_end in log_content:
+        start = log_content.find("[packageName = ")
+        end = log_content.find("]", start) + 1
+        package_name = log_content[start:end]
+        output_text.insert(tk.END, package_name+ "\n")
+        #去重
+        unique_logs_dict = {}
+        for log in input_info.temp_log:
+            part_log = log.split()
+            message = ' '.join(part_log[5:])
+            if message not in unique_logs_dict:
+                unique_logs_dict[message] = log
+        # 获取去重后的日志列表
+        input_info.apk_errlog_indexopt = list(unique_logs_dict.values())
+
+        # 依次输出
+        for item in input_info.apk_errlog_indexopt:
+            output_text.insert(tk.END,item)
+        input_info.apk_errlog_indexopt = []
+        input_info.temp_log = []
+        input_info.find_APK_dexopt_key = 0
+    
+    # 只截取最适化过程中的错误log
+    if input_info.find_dexopt_key and input_info.find_APK_dexopt_key and log_level == "E" :
+        input_info.temp_log.append(line)
         rc = 1
-    #rc = ag.find_dexopt_err(input_info, line)
+    
     return rc
 
 # 读取文件进行分析和输出
@@ -132,18 +165,17 @@ def run(input_info,sqlpath):
             with open(input_info.address, 'r', encoding='utf-8') as file:
                 for line in file:
                     rc = dexopt_analysis(input_info, line)
-                    if(rc == -1):
+                    if(rc == -1):# 检测到最适化结束 退出
                         break
                     elif(rc == 1):
-                        output_text.insert(tk.END, line)
+                        # 常见错误分析
+                        for key,note in rows:
+                            err_rc = ag.find_err_in_line(key ,line)
+                            if (err_rc):
+                                sql_text.insert(tk.END, line)
+                                sql_text.insert(tk.END, "log分析:" + note + "\n")
                     else:
                         continue
-                    #检索常见错误
-                    for key,note in rows:
-                        err_rc = ag.find_err_in_line(key ,line)
-                        if (err_rc):
-                            sql_text.insert(tk.END, line)
-                            sql_text.insert(tk.END, "log分析:" + note + "\n")
                 return
         else:
             with open(input_info.address, 'r', encoding='utf-8') as file:
